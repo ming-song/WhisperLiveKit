@@ -1,45 +1,54 @@
- 
-services:  
-  wlk-auto:  
-    build:  
-      context: .  
-      dockerfile: Dockerfile  
-    container_name: wlk-auto  
-    ports:  
-      - "8764:8000"  
-    volumes:  
+version: '3.8'
+
+services:
+  # 基础镜像构建服务
+  wlk-base:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: whisperlivekit:latest
+    profiles: ["build-only"]  # 仅用于构建，不会启动
+
+  wlk-auto:
+    image: whisperlivekit:latest
+    container_name: wlk-auto
+    depends_on:
+      - wlk-base
+    ports:
+      - "8764:8000"
+    volumes:
       - ./models/hf:/root/.cache/huggingface/hub
-      - ./models/torch:/root/.cache/torch/hub  
-    command: ["--language", "zh", "--model", "small"]
-    restart: unless-stopped  
-    deploy:  
-      resources:  
-        reservations:  
-          devices:  
-            - driver: nvidia  
-              count: all  
-              capabilities: [gpu]  
-  
-  wlk-cn:  
-    build:  
-      context: .  
-      dockerfile: Dockerfile  
-    container_name: wlk-cn  
-    ports:  
-      - "8763:8000"  
-    volumes:  
+      - ./models/torch:/root/.cache/torch/hub
+    command: ["--language", "auto", "--no-vac"]
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  wlk-cn:
+    image: whisperlivekit:latest
+    container_name: wlk-cn
+    depends_on:
+      - wlk-base
+    ports:
+      - "8763:8000"
+    volumes:
       - ./models/hf:/root/.cache/huggingface/hub
-      - ./models/torch:/root/.cache/torch/hub  
-    command: ["--language", "zh", "--model", "medium"]  
-    restart: unless-stopped  
-    deploy:  
-      resources:  
-        reservations:  
-          devices:  
-            - driver: nvidia  
-              count: all  
-              capabilities: [gpu]  
-  
-volumes:  
-  models:  
+      - ./models/torch:/root/.cache/torch/hub
+    command: ["--language", "zh", "--no-vac"]
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+volumes:
+  models:
     driver: local

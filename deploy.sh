@@ -53,11 +53,13 @@ else
     echo "⚠ 警告: download_vad_model.py 文件不存在，跳过模型下载"
 fi
 
-# 步骤5: 启动 Docker Compose 服务
+# 步骤5: 构建基础镜像和启动服务
 echo ""
-echo "[步骤 5/6] 启动 Docker Compose 服务..."
-echo "构建并启动容器（后台模式）..."
-docker compose up -d --build
+echo "[步骤 5/6] 构建基础镜像和启动服务..."
+echo "首先构建基础镜像..."
+docker compose --profile build-only up --build wlk-base
+echo "启动应用服务（后台模式）..."
+docker compose up -d wlk-auto wlk-cn
 echo "✓ Docker 服务启动命令执行完成"
 
 # 步骤6: 监控服务启动状态
