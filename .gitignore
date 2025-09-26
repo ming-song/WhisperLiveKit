@@ -131,7 +131,29 @@ dmypy.json
 run_*.sh
 
 # Downloaded models
-*.pt 
+*.pt
+*.bin
+*.safetensors
+*.onnx
+*.h5
+*.pkl
+*.model
+*.pth
+*.ckpt
+models/
+*.huggingface/
+.cache/
+huggingface/
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+ENV/
+venv*/
+.virtualenv/
+pyvenv.cfg
 
 # Debug & testing
 test_*.py

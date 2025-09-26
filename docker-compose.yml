@@ -1,0 +1,45 @@
+ 
+services:  
+  wlk-auto:  
+    build:  
+      context: .  
+      dockerfile: Dockerfile  
+    container_name: wlk-auto  
+    ports:  
+      - "8764:8000"  
+    volumes:  
+      - ./models/hf:/root/.cache/huggingface/hub
+      - ./models/torch:/root/.cache/torch/hub  
+    command: ["--language", "zh", "--model", "small"]
+    restart: unless-stopped  
+    deploy:  
+      resources:  
+        reservations:  
+          devices:  
+            - driver: nvidia  
+              count: all  
+              capabilities: [gpu]  
+  
+  wlk-cn:  
+    build:  
+      context: .  
+      dockerfile: Dockerfile  
+    container_name: wlk-cn  
+    ports:  
+      - "8763:8000"  
+    volumes:  
+      - ./models/hf:/root/.cache/huggingface/hub
+      - ./models/torch:/root/.cache/torch/hub  
+    command: ["--language", "zh", "--model", "medium"]  
+    restart: unless-stopped  
+    deploy:  
+      resources:  
+        reservations:  
+          devices:  
+            - driver: nvidia  
+              count: all  
+              capabilities: [gpu]  
+  
+volumes:  
+  models:  
+    driver: local
